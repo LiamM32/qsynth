@@ -1178,7 +1178,8 @@ void qsynthMainForm::stabilizeForm (void)
 	m_ui.OutputGroupBox->setEnabled(bEnabled && pEngine->bMeterEnabled);
 	m_ui.ProgramResetPushButton->setEnabled(bEnabled);
 	m_ui.SystemResetPushButton->setEnabled(bEnabled);
-	m_ui.ChannelsPushButton->setEnabled(bEnabled);
+    m_ui.ChannelsPushButton->setEnabled(bEnabled);
+    m_ui.TuningPushButton->setEnabled(bEnabled);
 
 	if (bEnabled) {
 		const bool bReverbActive = m_ui.ReverbActiveCheckBox->isChecked();
@@ -1221,6 +1222,8 @@ void qsynthMainForm::stabilizeForm (void)
 		m_pMessagesForm && m_pMessagesForm->isVisible());
 	m_ui.ChannelsPushButton->setChecked(
 		m_pChannelsForm && m_pChannelsForm->isVisible());
+    m_ui.TuningPushButton->setChecked(
+        m_pTuningsForm && m_pTuningsForm->isVisible());
 }
 
 
@@ -1453,7 +1456,7 @@ void qsynthMainForm::toggleChannelsForm (void)
 }
 
 
-// Tunings view form requester slot. (WIP: Not yet functional)
+// Tunings view form requester slot. HELP: Not yet functional
 void qsynthMainForm::toggleTuningsForm (void)
 {
     if (m_pOptions == NULL)

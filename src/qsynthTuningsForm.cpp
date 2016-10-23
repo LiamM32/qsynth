@@ -52,9 +52,9 @@ void qsynthTuningsForm::hideEvent ( QHideEvent *pHideEvent )
 }
 
 // Copied from qsynthChannelsForm.cpp or qsynthMessagesForm.cpp.
-void qsynthChannelsForm::closeEvent (QCloseEvent * /*pCloseEvent*/ )
+void qsynthTuningsForm::closeEvent (QCloseEvent * /*pCloseEvent*/ )
 {
-    Qwidget::hide();
+    QWidget::hide();
 
     qsynthMainForm *pMainForm = qsynthMainForm::getInstance();
     if (pMainForm)

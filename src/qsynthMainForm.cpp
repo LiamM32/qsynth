@@ -1453,6 +1453,25 @@ void qsynthMainForm::toggleChannelsForm (void)
 }
 
 
+// Tunings view form requester slot. (WIP: Not yet functional)
+void qsynthMainForm::toggleTuningsForm (void)
+{
+    if (m_pOptions == NULL)
+        return;
+
+    if (m_pTuningsForm) {
+        m_pOptions->saveWidgetGeometry(m_pTuningsForm);
+        if (m_pTuningsForm->isVisible()) {
+            m_pTuningsForm->hide();
+        } else {
+            m_pTuningsForm->show();
+            m_pTuningsForm->raise();
+            m_pTuningsForm->activateWindow();
+        }
+    }
+}
+
+
 // Instance dialog requester slot.
 void qsynthMainForm::showSetupForm (void)
 {

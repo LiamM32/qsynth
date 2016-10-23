@@ -29,6 +29,7 @@
 class qsynthOptions;
 class qsynthMessagesForm;
 class qsynthChannelsForm;
+class qsynthTuningsForm;
 
 #ifdef CONFIG_SYSTEM_TRAY
 class qsynthSystemTray;
@@ -96,6 +97,7 @@ protected slots:
 	void toggleMainForm();
 	void toggleMessagesForm();
 	void toggleChannelsForm();
+    void toggleTuningsForm();
 
 	void showSetupForm();
 	void showOptionsForm();
@@ -186,6 +188,7 @@ private:
 
 	qsynthMessagesForm *m_pMessagesForm;
 	qsynthChannelsForm *m_pChannelsForm;
+    qsynthTuningsForm  *m_pTuningsForm;
 
 	int m_iGainChanged;
 	int m_iReverbChanged;

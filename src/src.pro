@@ -29,7 +29,9 @@ HEADERS += config.h \
 	qsynthDialClassicStyle.h \
 	qsynthDialPeppinoStyle.h \
 	qsynthDialVokiStyle.h \
-	qsynthDialSkulptureStyle.h
+	qsynthDialSkulptureStyle.h \
+    qsynthTuningsForm.h \
+    dialog.h
 
 SOURCES += \
 	qsynth.cpp \
@@ -51,7 +53,9 @@ SOURCES += \
 	qsynthDialClassicStyle.cpp \
 	qsynthDialPeppinoStyle.cpp \
 	qsynthDialVokiStyle.cpp \
-	qsynthDialSkulptureStyle.cpp
+	qsynthDialSkulptureStyle.cpp \
+    qsynthTuningsForm.cpp \
+    dialog.cpp
 
 FORMS += \
 	qsynthAboutForm.ui \
@@ -60,7 +64,10 @@ FORMS += \
 	qsynthMessagesForm.ui \
 	qsynthOptionsForm.ui \
 	qsynthPresetForm.ui \
-	qsynthSetupForm.ui
+	qsynthSetupForm.ui \
+    dialog.ui \
+    qsynthTuningsForm1.ui \
+    qsynthTuningsForm.ui
 
 RESOURCES += \
 	qsynth.qrc

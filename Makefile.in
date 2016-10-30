@@ -9,6 +9,7 @@ headers = \
 	src/qsynthAbout.h \
 	src/qsynthEngine.h \
 	src/qsynthChannels.h \
+	src/qsynthTuning.h \
 	src/qsynthKnob.h \
 	src/qsynthMeter.h \
 	src/qsynthSetup.h \
@@ -17,6 +18,7 @@ headers = \
 	src/qsynthTabBar.h \
 	src/qsynthAboutForm.h \
 	src/qsynthChannelsForm.h \
+	src/qsynthTuningsForm.h \
 	src/qsynthMainForm.h \
 	src/qsynthMessagesForm.h \
 	src/qsynthOptionsForm.h \
@@ -30,6 +32,7 @@ sources = \
 	src/qsynth.cpp \
 	src/qsynthEngine.cpp \
 	src/qsynthChannels.cpp \
+	src/qsynthTuning.cpp \
 	src/qsynthKnob.cpp \
 	src/qsynthMeter.cpp \
 	src/qsynthSetup.cpp \
@@ -38,6 +41,7 @@ sources = \
 	src/qsynthTabBar.cpp \
 	src/qsynthAboutForm.cpp \
 	src/qsynthChannelsForm.cpp \
+	src/qsynthTuningsForm.cpp \
 	src/qsynthMainForm.cpp \
 	src/qsynthMessagesForm.cpp \
 	src/qsynthOptionsForm.cpp \
@@ -50,6 +54,7 @@ sources = \
 forms = \
 	src/qsynthAboutForm.ui \
 	src/qsynthChannelsForm.ui \
+	src/qsynthTuningsForm.ui \
 	src/qsynthMainForm.ui \
 	src/qsynthMessagesForm.ui \
 	src/qsynthOptionsForm.ui \

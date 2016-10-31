@@ -97,7 +97,7 @@ protected slots:
 	void toggleMainForm();
 	void toggleMessagesForm();
 	void toggleChannelsForm();
-    void toggleTuningsForm();
+	void toggleTuningsForm();
 
 	void showSetupForm();
 	void showOptionsForm();

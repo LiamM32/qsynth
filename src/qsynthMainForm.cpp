@@ -33,6 +33,7 @@
 #include "qsynthOptionsForm.h"
 #include "qsynthMessagesForm.h"
 #include "qsynthChannelsForm.h"
+#include "qsynthTuningsForm.h"
 
 #include "qsynthDialClassicStyle.h"
 #include "qsynthDialVokiStyle.h"
@@ -386,6 +387,7 @@ qsynthMainForm::qsynthMainForm (
 	// All forms are to be created later on setup.
 	m_pMessagesForm  = NULL;
 	m_pChannelsForm  = NULL;
+	m_pTuningsForm   = NULL;
 
 #ifdef CONFIG_SYSTEM_TRAY
 	// The eventual system tray widget.
@@ -504,6 +506,9 @@ qsynthMainForm::qsynthMainForm (
 	QObject::connect(m_ui.ChannelsPushButton,
 		SIGNAL(clicked()),
 		SLOT(toggleChannelsForm()));
+	QObject::connect(m_ui.TuningPushButton,
+		SIGNAL(clicked()),
+		SLOT(toggleTuningsForm()));
 	QObject::connect(m_ui.QuitPushButton,
 		SIGNAL(clicked()),
 		SLOT(quitMainForm()));
@@ -546,6 +551,8 @@ qsynthMainForm::~qsynthMainForm (void)
 		delete m_pMessagesForm;
 	if (m_pChannelsForm)
 		delete m_pChannelsForm;
+	if (m_pTuningsForm)
+		delete m_pTuningsForm;
 
 #ifdef CONFIG_SYSTEM_TRAY
 	// Quit off system tray widget.
@@ -591,6 +598,7 @@ void qsynthMainForm::setup ( qsynthOptions *pOptions )
 	// All forms are to be created right now.
 	m_pMessagesForm = new qsynthMessagesForm(pParent, wflags);
 	m_pChannelsForm = new qsynthChannelsForm(pParent, wflags);
+	m_pTuningsForm  = new qsynthTuningsForm(pParent, wflags);
 
 	// Setup appropriately...
 	m_pMessagesForm->setLogging(m_pOptions->bMessagesLog, m_pOptions->sMessagesLogPath);
@@ -608,6 +616,7 @@ void qsynthMainForm::setup ( qsynthOptions *pOptions )
 	// And for the whole widget gallore...
 	m_pOptions->loadWidgetGeometry(m_pMessagesForm);
 	m_pOptions->loadWidgetGeometry(m_pChannelsForm);
+	m_pOptions->loadWidgetGeometry(m_pTuningsForm);
 
 	// Set defaults...
 	updateMessagesFont();
@@ -741,12 +750,15 @@ bool qsynthMainForm::queryClose (void)
 		if (bQueryClose) {
 			m_pOptions->saveWidgetGeometry(m_pChannelsForm);
 			m_pOptions->saveWidgetGeometry(m_pMessagesForm);
+			m_pOptions->saveWidgetGeometry(m_pTuningsForm);
 			m_pOptions->saveWidgetGeometry(this, true);
 			// Close popup widgets.
 			if (m_pMessagesForm)
 				m_pMessagesForm->close();
 			if (m_pChannelsForm)
 				m_pChannelsForm->close();
+			if (m_pTuningsForm)
+				m_pTuningsForm->close();
 		#ifdef CONFIG_SYSTEM_TRAY
 			// And the system tray icon too.
 			if (m_pSystemTray)
@@ -1113,21 +1125,34 @@ void qsynthMainForm::contextMenu ( const QPoint& pos )
 	bool bEnabled = (pEngine && pEngine->pSynth);
 	pAction = menu.addAction(QIcon(":/images/restart1.png"),
 		bEnabled ? tr("Re&start") : tr("&Start"), this, SLOT(promptRestart()));
+
 	pAction = menu.addAction(QIcon(":/images/reset1.png"),
 		tr("&Reset"), this, SLOT(programReset()));
 	pAction->setEnabled(bEnabled);
+	
 	pAction = menu.addAction(QIcon(":/images/panic1.png"),
 		tr("&Panic"), this, SLOT(systemReset()));
 	pAction->setEnabled(bEnabled);
 	menu.addSeparator();
+	
 	pAction = menu.addAction(QIcon(":/images/channels1.png"),
 		tr("&Channels"), this, SLOT(toggleChannelsForm()));
 	pAction->setCheckable(true);
 	pAction->setChecked(m_pChannelsForm && m_pChannelsForm->isVisible());
 	pAction->setEnabled(bEnabled);
+
+	// HELP: Am I doing this right?
+	// TODO: Replace the following channels menu sprite with new sprite.
+	pAction = menu.addAction(QIcon(":/images/channels1.png"),
+		tr("&Tunings"), this, SLOT(toggleTuningsForm()));
+	pAction->setCheckable(true);
+	pAction->setChecked(m_pTuningsForm && m_pTuningsForm->isVisible());
+	pAction->setEnabled(bEnabled);
+	
 	pAction = menu.addAction(QIcon(":/images/setup1.png"),
 		tr("Set&up..."), this, SLOT(showSetupForm()));
 	menu.addSeparator();
+
 
 	// Construct the actual engines menu,
 	// overriding the last one, if any...
@@ -1178,8 +1203,8 @@ void qsynthMainForm::stabilizeForm (void)
 	m_ui.OutputGroupBox->setEnabled(bEnabled && pEngine->bMeterEnabled);
 	m_ui.ProgramResetPushButton->setEnabled(bEnabled);
 	m_ui.SystemResetPushButton->setEnabled(bEnabled);
-    m_ui.ChannelsPushButton->setEnabled(bEnabled);
-    m_ui.TuningPushButton->setEnabled(bEnabled);
+	m_ui.ChannelsPushButton->setEnabled(bEnabled);
+	m_ui.TuningPushButton->setEnabled(bEnabled);
 
 	if (bEnabled) {
 		const bool bReverbActive = m_ui.ReverbActiveCheckBox->isChecked();
@@ -1222,7 +1247,7 @@ void qsynthMainForm::stabilizeForm (void)
 		m_pMessagesForm && m_pMessagesForm->isVisible());
 	m_ui.ChannelsPushButton->setChecked(
 		m_pChannelsForm && m_pChannelsForm->isVisible());
-    m_ui.TuningPushButton->setChecked(
+	m_ui.TuningPushButton->setChecked(
         m_pTuningsForm && m_pTuningsForm->isVisible());
 }
 
@@ -1456,7 +1481,7 @@ void qsynthMainForm::toggleChannelsForm (void)
 }
 
 
-// Tunings view form requester slot. HELP: Not yet functional
+// Tunings view form requester slot. WIP
 void qsynthMainForm::toggleTuningsForm (void)
 {
     if (m_pOptions == NULL)

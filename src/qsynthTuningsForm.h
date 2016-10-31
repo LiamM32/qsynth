@@ -10,39 +10,58 @@
 class qsynthOptions;
 class qsynthEngine;
 
+class qsynthTuning;
+
 class QPixmap;
 
 
 class qsynthTuningsForm : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
+
 public:
 
-    qsynthTuningsForm(QWidget *pParent = 0, Qt::WindowFlags wflags = 0);
-    ~qsynthTuningsForm();
+	qsynthTuningsForm(QWidget *pParent = 0, Qt::WindowFlags wflags = 0);
+	~qsynthTuningsForm();
 
-    void setup(qsynthOptions *pOptions, qsynthEngine *pEngine, bool bNew/*TODO:Or change to bPreset*/);
+	void setup(qsynthOptions *pOptions, qsynthEngine *pEngine, bool bTuning/*TODO:Or change to bNew or bPreset*/);
 
-signals:
+	void updateTuning(int iTune);
 
 public slots:
 
-    void contextMenuRequested(const QPoint&); //TODO: What is this for?
+	void itemActivated(QTreeWidgetItem*,int);
+
+//	void contextMenuRequested(const QPoint&); //HELP: What is this for?
 
 protected:
 
-    void showEvent(QShowEvent *);
-    void hideEvent(QHideEvent *);
-    void closeEvent(QCloseEvent *);
+	void showEvent(QShowEvent *);
+	void hideEvent(QHideEvent *);
+	void closeEvent(QCloseEvent *);
+	
+	void stabilizeForm();
+
+	void openSysex();
 
 private:
 
-    Ui::qsynthTuningsForm m_ui;
+	Ui::qsynthTuningsForm m_ui;
 
-    qsynthOptions *m_pOptions;
+	int m_iTuning;
 
-    int m_iDirtySetup;
-    int m_iDirtyCount;
+	qsynthTuning **m_ppTuning;
+
+	qsynthOptions *m_pOptions;
+	qsynthEngine  *m_pEngine;
+
+	fluid_synth_t *m_pSynth;
+
+	int m_iDirtySetup;
+	int m_iDirtyCount;
+
+	QPixmap *m_pXpmLedOn;
+	QPixmap *m_pXpmLedOff;
 };
 
 #endif // __qsynthTuningsForm_h

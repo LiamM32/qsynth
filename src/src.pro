@@ -13,6 +13,7 @@ HEADERS += config.h \
 	qsynthAbout.h \
 	qsynthEngine.h \
 	qsynthChannels.h \
+	qsynthTuning.h \
 	qsynthKnob.h \
 	qsynthMeter.h \
 	qsynthSetup.h \
@@ -30,13 +31,13 @@ HEADERS += config.h \
 	qsynthDialPeppinoStyle.h \
 	qsynthDialVokiStyle.h \
 	qsynthDialSkulptureStyle.h \
-    qsynthTuningsForm.h \
-    dialog.h
+	qsynthTuningsForm.h
 
 SOURCES += \
 	qsynth.cpp \
 	qsynthEngine.cpp \
 	qsynthChannels.cpp \
+	qsynthTuning.cpp \
 	qsynthKnob.cpp \
 	qsynthMeter.cpp \
 	qsynthSetup.cpp \
@@ -54,8 +55,7 @@ SOURCES += \
 	qsynthDialPeppinoStyle.cpp \
 	qsynthDialVokiStyle.cpp \
 	qsynthDialSkulptureStyle.cpp \
-    qsynthTuningsForm.cpp \
-    dialog.cpp
+	qsynthTuningsForm.cpp
 
 FORMS += \
 	qsynthAboutForm.ui \
@@ -65,9 +65,7 @@ FORMS += \
 	qsynthOptionsForm.ui \
 	qsynthPresetForm.ui \
 	qsynthSetupForm.ui \
-    dialog.ui \
-    qsynthTuningsForm1.ui \
-    qsynthTuningsForm.ui
+	qsynthTuningsForm.ui
 
 RESOURCES += \
 	qsynth.qrc

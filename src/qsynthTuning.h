@@ -5,7 +5,7 @@
 
 // Column index helpers.
 #define QSYNTH_TUNINGS_IN       0
-#define QSYNTH_TUNINGS_NOTENUM  1
+#define QSYNTH_TUNINGS_KEYNUM   1
 #define QSYNTH_TUNINGS_PITCHCL  2
 #define QSYNTH_TUNINGS_NOTENAME 3
 #define QSYNTH_TUNINGS_DETUNE   4
@@ -19,6 +19,8 @@ public:
     qsynthTuning(QTreeWidget *pParent);
 
     ~qsynthTuning();
+	
+	bool operator< (const QTreeWidgetItem& other) const;
 };
 
 typedef qsynthTuning * qsynthTuningPtr;

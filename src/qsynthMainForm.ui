@@ -26,8 +26,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>820</width>
-    <height>214</height>
+    <width>850</width>
+    <height>237</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -468,7 +468,7 @@
          </font>
         </property>
         <property name="text">
-         <string>D&amp;amp</string>
+         <string>Da&amp;mp</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -671,6 +671,20 @@
        </property>
        <property name="autoDefault">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="TerminalPushButton">
+       <property name="toolTip">
+        <string>Show Fluidsynth terminal</string>
+       </property>
+       <property name="text">
+        <string>Terminal</string>
+       </property>
+       <property name="icon">
+        <iconset resource="qsynth.qrc">
+         <normaloff>:/images/messages1.png</normaloff>:/images/messages1.png</iconset>
        </property>
       </widget>
      </item>

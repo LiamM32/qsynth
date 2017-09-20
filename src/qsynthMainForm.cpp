@@ -1282,6 +1282,8 @@ void qsynthMainForm::systemReset (void)
 	#endif
 		if (m_pChannelsForm)
 			m_pChannelsForm->resetAllChannels(true);
+		if (m_pTuningsForm) // Should I do this?
+			m_pTuningsForm->resetAllKeyTunings();
 	}
 	stabilizeForm();
 }
@@ -1737,6 +1739,13 @@ void qsynthMainForm::timerSlot (void)
 			}
 		}
 	}
+	
+/*	// MIDI Key activity breakout...
+	if (m_pTuningsForm) {
+		for (int iKey = 0; iKey < 128; ++iKey) {
+			if (g_pT)
+		}
+	}*/
 
 	// Gain changes?
 	if (m_iGainChanged > 0)
@@ -1949,6 +1958,12 @@ bool qsynthMainForm::startEngine ( qsynthEngine *pEngine )
 			tr("Server mode disabled.\n\n"
 			"Continuing without it."));
 	#endif
+		
+	// Create the command handler.
+	appendMessages(sPrefix + tr("Creating MIDI player") + sElipsis);
+	pEngine->pCmdHandler = ::new_fluid_cmd_handler(pEngine->pSynth);
+	
+	::fluid_usershell(pSetup->fluid_settings(), pEngine->pCmdHandler);
 	}
 
 	// Make an initial program reset.
@@ -1958,6 +1973,7 @@ bool qsynthMainForm::startEngine ( qsynthEngine *pEngine )
 	if (pEngine == currentEngine()) {
 		loadPanelSettings(pEngine, true);
 		resetChannelsForm(pEngine, true);
+		resetTuningsForm(pEngine,  true);
 		stabilizeForm();
 	} else {
 		setEngineReverbOn(pEngine,
@@ -2375,6 +2391,16 @@ void qsynthMainForm::resetChannelsForm ( qsynthEngine *pEngine, bool bPreset )
 			g_pMidiChannels[iChan].iChange = 0;
 		}
 	}
+}
+
+
+// Complete refresh of the tunings form.
+void qsynthMainForm::resetTuningsForm ( qsynthEngine *pEngine, bool bTuning )
+{
+	if (m_pTuningsForm == NULL)
+		return;
+	
+	m_pTuningsForm->setup(m_pOptions, pEngine, bTuning);
 }
 
 

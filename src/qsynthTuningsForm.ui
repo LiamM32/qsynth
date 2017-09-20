@@ -26,8 +26,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>514</width>
-    <height>321</height>
+    <width>636</width>
+    <height>519</height>
    </rect>
   </property>
   <property name="font">
@@ -80,17 +80,22 @@
      </property>
      <column>
       <property name="text">
-       <string>Number</string>
+       <string>In</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>pattern no</string>
+       <string>Key</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>note</string>
+       <string>repeat</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Note</string>
       </property>
      </column>
      <column>
@@ -116,7 +121,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>Open sysex file</string>
+        <string>To open MTS sysex file (not yet working)</string>
        </property>
        <property name="text">
         <string>&amp;Open</string>
@@ -139,7 +144,7 @@
         </size>
        </property>
        <property name="toolTip">
-        <string>(Does nothing yet)</string>
+        <string>Save tuning as sysex file (Does nothing yet)</string>
        </property>
        <property name="text">
         <string>&amp;Save</string>

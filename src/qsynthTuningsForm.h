@@ -26,11 +26,14 @@ public:
 
 	void setup(qsynthOptions *pOptions, qsynthEngine *pEngine, bool bTuning/*TODO:Or change to bNew or bPreset*/);
 
-	void updateTuning(int iTune);
+	void resetAllKeyTunings();
+	void updateKeyTuning(int iTune, double tuningcents);
 
 public slots:
 
 	void itemActivated(QTreeWidgetItem*,int);
+	
+	void updateAllKeyTunings();
 
 //	void contextMenuRequested(const QPoint&); //HELP: What is this for?
 
@@ -48,7 +51,7 @@ private:
 
 	Ui::qsynthTuningsForm m_ui;
 
-	int m_iTuning;
+	int m_iTuning = 128;
 
 	qsynthTuning **m_ppTuning;
 
@@ -56,6 +59,8 @@ private:
 	qsynthEngine  *m_pEngine;
 
 	fluid_synth_t *m_pSynth;
+	
+	double tuningcents[128];
 
 	int m_iDirtySetup;
 	int m_iDirtyCount;

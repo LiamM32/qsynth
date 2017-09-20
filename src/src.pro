@@ -65,7 +65,8 @@ FORMS += \
 	qsynthOptionsForm.ui \
 	qsynthPresetForm.ui \
 	qsynthSetupForm.ui \
-	qsynthTuningsForm.ui
+	qsynthTuningsForm.ui \
+    qsynthterminalform.ui
 
 RESOURCES += \
 	qsynth.qrc

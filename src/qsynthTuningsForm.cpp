@@ -101,7 +101,7 @@ void qsynthTuningsForm::closeEvent (QCloseEvent * /*pCloseEvent*/ )
 }
 
 void qsynthTuningsForm::setup ( qsynthOptions *pOptions,
-	qsynthEngine *pEngine, bool bTuning )
+	qsynthEngine *pEngine, bool bTuning ) //HELP: Do I need bTuning?
 {
 	m_pOptions = pOptions;
 	m_pEngine  = pEngine;
@@ -121,15 +121,15 @@ void qsynthTuningsForm::setup ( qsynthOptions *pOptions,
 
 	m_ui.TuningsListView->clear();
 	if (m_pSynth && m_ppTuning == NULL) {
-//		m_iTunings = 128; Don't think we need this, as it will always be 128.
+		m_iTuning = 128; //Don't think we need this, as it will always be 128.
 		m_ppTuning = new qsynthTuningPtr [m_iTuning];
-		for (int iTune = 0; iTune < 127; iTune++) {
+		for (int iTune = 0; iTune < 128; iTune++) {
 			qsynthTuning *pItem = new qsynthTuning(
 				m_ui.TuningsListView);
 			if (pItem) {
 				pItem->setIcon(QSYNTH_TUNINGS_IN,
 					*m_pXpmLedOff);
-				pItem->setText(QSYNTH_TUNINGS_NOTENUM,
+				pItem->setText(QSYNTH_TUNINGS_KEYNUM,
 					QString::number(iTune + 1));
 			}
 			m_ppTuning[iTune] = pItem;
@@ -137,18 +137,54 @@ void qsynthTuningsForm::setup ( qsynthOptions *pOptions,
 
 		m_iDirtySetup++;
 		m_iDirtySetup--;
+		resetAllKeyTunings();
 	}
 }
 
 // Tunings item update. Derived from the Channels item update. HELP: Don't understand this well.
-void qsynthTuningsForm::updateTuning ( int iTune )
+void qsynthTuningsForm::updateKeyTuning (int iKey, double keytuningcents )
 {
 	if (m_pSynth == NULL || m_ppTuning == NULL)
 		return;
-	if (iTune < 0 || iTune >= m_iTuning)
+	if (iKey < 0 || iKey >= m_iTuning)
 		return;
 
-	qsynthTuning *pItem = m_ppTuning[iTune];
+	/* Because the tuning features in fluidsynth are designed to hold multiple tunings,
+	 * but this isn't needed most of the time, Qsynth could eventually have a "default" tuning
+	 * initialized at bank 0 prog 0 which all channels are set to by default. */
+	
+	qsynthTuning *pItem = m_ppTuning[iKey];
+	
+	
+	pItem->setText(QSYNTH_TUNINGS_DETUNE,
+		QString::number(keytuningcents));
+}
+
+void qsynthTuningsForm::updateAllKeyTunings ()
+{
+	double tuningcents[128];
+	int tuningBank = 0; //HELP: Don't really know how tuning bank should be determined.
+	int tuningProg = 0; //HELP: Don't know what the "program" should be either.
+	::fluid_synth_tuning_dump(m_pSynth, tuningBank, tuningProg, NULL, 0, tuningcents);
+	for (int iKey = 0; iKey < 128; iKey++)
+		updateKeyTuning(iKey, tuningcents[iKey]);
+	
+	m_ui.TuningsListView->update();
+	m_ui.TuningsListView->sortItems(1, Qt::DescendingOrder);
+	
+	stabilizeForm();
+}
+
+void qsynthTuningsForm::resetAllKeyTunings ()
+{
+	if (m_pEngine == NULL)
+		return;
+	
+	qsynthSetup *pSetup = m_pEngine->setup();
+	if (pSetup == NULL)
+		return;
+	
+	updateAllKeyTunings();
 }
 
 void qsynthTuningsForm::itemActivated ( QTreeWidgetItem *pItem, int )

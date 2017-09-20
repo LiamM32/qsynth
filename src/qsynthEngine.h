@@ -55,6 +55,7 @@ public:
 	fluid_midi_driver_t  *pMidiDriver;
 	fluid_player_t       *pPlayer;
 	fluid_server_t       *pServer;
+	fluid_cmd_handler_t  *pCmdHandler; //LIAM: Don't know if this is needed.
 
 	// Dirty MIDI event trackers.
 	int iMidiEvent;

@@ -159,7 +159,8 @@ protected:
 	void loadPanelSettings(qsynthEngine *pEngine, bool bUpdate);
 	void savePanelSettings(qsynthEngine *pEngine);
 
-	void resetChannelsForm(qsynthEngine *pEngine, bool fPreset);
+	void resetChannelsForm(qsynthEngine *pEngine, bool fPreset); //HELP: Is "fPreset" a typo? Shouldn't it be "bPreset" (as in function definition)?
+	void resetTuningsForm(qsynthEngine *pEngine, bool fTuning);
 
 	void updateGain();
 	void updateReverb();

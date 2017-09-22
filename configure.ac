@@ -1,17 +1,35 @@
 # Process this file with autoconf to produce a configure script.
-AC_INIT(Qsynth, 0.4.2.8, rncbc@rncbc.org, qsynth)
+AC_INIT(Qsynth, 0.4.5, rncbc@rncbc.org, qsynth)
 
 AC_CONFIG_SRCDIR(src/qsynth.cpp)
 AC_CONFIG_HEADERS(src/config.h)
-AC_CONFIG_FILES(Makefile qsynth.spec src/src.pri src/qsynth.desktop)
+AC_CONFIG_FILES(Makefile qsynth.spec src/src.pri)
 
-# Sanitize version string.
-ac_version=$(echo $PACKAGE_VERSION | sed -r 's/^([0-9|\.]+).*$/\1/')
+# Build version string.
+AC_CACHE_VAL([ac_cv_build_version], [
+   ac_cv_build_version=$(git describe --tags --dirty --abbrev=6 2>/dev/null)
+   if test -n "$ac_cv_build_version"; then
+      ac_cv_build_version=$(echo $ac_cv_build_version | sed 's/^[[^_]]*[[_v]]//i')
+      ac_cv_build_version=$(echo $ac_cv_build_version | sed 's/-g/git./')
+      ac_cv_build_version=$(echo $ac_cv_build_version | sed 's/[[_|-]]\+/./g')
+      ac_cv_build_version_extra=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+      if test "x$ac_cv_build_version_extra" != "xmaster"; then
+         ac_cv_build_version="$ac_cv_build_version [[$ac_cv_build_version_extra]]"
+      fi
+   else
+      ac_cv_build_version=$PACKAGE_VERSION
+   fi
+])
+ac_build_version="$ac_cv_build_version"
+AC_DEFINE_UNQUOTED(CONFIG_BUILD_VERSION, ["$ac_build_version"], [Build version string.])
+
+# Sanitized version string.
+AC_CACHE_VAL([ac_cv_version], [
+   ac_cv_version=$(echo $PACKAGE_VERSION | sed -r 's/^([[0-9|\.]]+).*$/\1/')
+])
+ac_version="$ac_cv_version"
+AC_DEFINE_UNQUOTED(CONFIG_VERSION, ["$ac_version"], [Version string.])
 AC_SUBST(ac_version)
-
-# Build date and time.
-AC_CACHE_VAL([ac_cv_build_date], [ac_cv_build_date=$(date +"%b %d %Y %H:%M %z")])
-AC_DEFINE_UNQUOTED(CONFIG_BUILD_DATE, ["$ac_cv_build_date"], [Build date and time.])
 
 # Set default installation prefix.
 AC_PREFIX_DEFAULT(/usr/local)
@@ -134,6 +152,19 @@ AC_LANG_CPLUSPLUS
 # Check for pkg-config.
 PKG_PROG_PKG_CONFIG
 
+# Check whether -std=c++11 support is necessary (4 < g++ version < 6).
+AC_CACHE_CHECK([for g++ major version], [ac_cv_gxx_version_major], [
+   ac_cv_gxx_version_major=$($CC -dumpversion)
+   if test -n "$ac_cv_gxx_version_major"; then
+      ac_cv_gxx_version_major=$(echo $ac_cv_gxx_version_major | cut -d'.' -f1);
+   fi
+   ac_gxx_version_major=$(($ac_cv_gxx_version_major + 0))
+])
+ac_gxx_version_major=$ac_cv_gxx_version_major
+if test $ac_gxx_version_major -ge 4 -a $ac_gxx_version_major -lt 6; then
+   CXXFLAGS="-std=c++11 $CXXFLAGS"
+fi
+
 # Check for proper flags.
 ac_arch=$(uname -m)
 
@@ -183,21 +214,29 @@ if test "x$ac_qmake" = "xno"; then
    AC_MSG_ERROR([qmake $ac_errmsg])
 fi
 
-# Check for proper Qt4/5 major version.
-ac_qt_version_major=$($ac_qmake -query QT_VERSION | cut -d. -f1)
+# Check for proper Qt major version.
+AC_CACHE_CHECK([for Qt major version], [ac_cv_qt_version_major], [
+   ac_cv_qt_version_major=$($ac_qmake -query QT_VERSION | cut -d'.' -f1)
+   ac_cv_qt_version_major=$(($ac_cv_qt_version_major + 0))
+])
+ac_qt_version_major=$ac_cv_qt_version_major
 if test "x$ac_qt4" = "xyes"; then
-   if test "x$ac_qt_version_major" != "x4"; then
+   if test $ac_qt_version_major -ne 4; then
       AC_MSG_ERROR([qmake-qt4 $ac_errmsg (qt4-devel)])
    fi
 else
-   if test "x$ac_qt_version_major" != "x5"; then
+   if test $ac_qt_version_major -ne 5; then
       AC_MSG_ERROR([qmake-qt5 $ac_errmsg (qt5-devel)])
    fi
 fi
 
-ac_qt_install_bins=$($ac_qmake -query QT_INSTALL_BINS)
-if test -d $ac_qt_install_bins; then
-   ac_path="$ac_qt_install_bins:$ac_path"
+# Check for proper Qt install path.
+AC_CACHE_CHECK([for Qt install path], [ac_cv_qt_install_path], [
+   ac_cv_qt_install_path=$($ac_qmake -query QT_INSTALL_BINS)
+])
+ac_qt_install_path=$ac_cv_qt_install_path
+if test -d $ac_qt_install_path; then
+   ac_path="$ac_qt_install_path:$ac_path"
 fi
 
 # Check it again, now with updated PATH, just in case...
@@ -209,20 +248,26 @@ fi
 
 AC_SUBST(ac_qmake)
 
-ac_qt_install_headers=$($ac_qmake -query QT_INSTALL_HEADERS)
+AC_CACHE_CHECK([for Qt install headers], [ac_cv_qt_install_headers], [
+   ac_cv_qt_install_headers=$($ac_qmake -query QT_INSTALL_HEADERS)
+])
+ac_qt_install_headers=$ac_cv_qt_install_headers
 if test -d $ac_qt_install_headers; then
    CFLAGS="-I$ac_qt_install_headers $CFLAGS "
    CPPFLAGS="-I$ac_qt_install_headers $CPPFLAGS"
    ac_incpath="$ac_qt_install_headers $ac_incpath"
 fi
 
-ac_qt_install_libs=$($ac_qmake -query QT_INSTALL_LIBS)
+AC_CACHE_CHECK([for Qt install libraries], [ac_cv_qt_install_libs], [
+   ac_cv_qt_install_libs=$($ac_qmake -query QT_INSTALL_LIBS)
+])
+ac_qt_install_libs=$ac_cv_qt_install_libs
 if test -d $ac_qt_install_libs; then
    LIBS="-L$ac_qt_install_libs $LIBS"
    ac_libs="-L$ac_qt_install_libs $ac_libs"
 fi
 
-# Check for proper Qt4/5 version.
+# Finally, check for proper Qt4/5 version.
 if test "x$ac_qt4" = "xyes"; then
    AC_CACHE_CHECK([for Qt library version >= 4.4],
       ac_cv_qtversion, [
@@ -295,6 +340,9 @@ if test "x$ac_fluidsynth_lib" = "xyes"; then
    AC_DEFINE(CONFIG_FLUIDSYNTH, 1, [Define if FLUIDSYNTH library is available.])
    ac_cflags="$ac_cflags $FLUIDSYNTH_CFLAGS"
    ac_libs="$ac_libs $FLUIDSYNTH_LIBS"
+   CFLAGS="$CFLAGS $FLUIDSYNTH_CFLAGS"
+   CPPFLAGS="$CPPFLAGS $FLUIDSYNTH_CFLAGS"
+   LIBS="$LIBS $FLUIDSYNTH_LIBS"
 else
    AC_MSG_ERROR([*** FLUIDSYNTH library not found.])
 fi
@@ -306,6 +354,9 @@ AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h sys/ioctl.h unistd.h signal.h)
 
 # Check for X11 unique/single instance.
+if test "x$ac_xunique" = "xyes" -a "x$ac_qt4" = "xno"; then
+   PKG_CHECK_MODULES([QT5X11EXTRAS], [Qt5X11Extras], [ac_xunique="yes"], [ac_xunique="no"])
+fi
 if test "x$ac_xunique" = "xyes"; then
    AC_DEFINE(CONFIG_XUNIQUE, 1, [Define if X11 unique/single instance is enabled.])
    if test "x$ac_qt4" = "xno"; then
@@ -375,6 +426,12 @@ if test "x$ac_fluid_unset_program" = "xyes"; then
    AC_DEFINE(CONFIG_FLUID_UNSET_PROGRAM, 1, [Define if fluid_synth_unset_program is available.])
 fi
 
+# Check for fluid_version_str function.
+AC_CHECK_LIB(fluidsynth, fluid_version_str, [ac_fluid_version_str="yes"], [ac_fluid_version_str="no"])
+if test "x$ac_fluid_version_str" = "xyes"; then
+   AC_DEFINE(CONFIG_FLUID_VERSION_STR, 1, [Define if fluid_version_str is available.])
+fi
+
 # Finally produce a configure header file and the makefiles.
 AC_OUTPUT
 
@@ -383,7 +440,7 @@ AC_OUTPUT
 # Output summary message
 
 echo
-echo "  $PACKAGE_NAME $PACKAGE_VERSION  ($ac_cv_build_date)"
+echo "  $PACKAGE_NAME $ac_build_version"
 echo
 echo "  Build target . . . . . . . . . . . . . . . . . . .: $ac_debug"
 echo
@@ -393,6 +450,7 @@ echo "  FluidSynth reset support . . . . . . . . . . . . .: $ac_fluid_reset"
 echo "  FluidSynth bank offset support . . . . . . . . . .: $ac_fluid_bank_offset"
 echo "  FluidSynth channel info support  . . . . . . . . .: $ac_fluid_channel_info"
 echo "  FluidSynth unset program support . . . . . . . . .: $ac_fluid_unset_program"
+echo "  FluidSynth version string support  . . . . . . . .: $ac_fluid_version_str"
 echo "  System tray icon support . . . . . . . . . . . . .: $ac_system_tray"
 echo
 echo "  X11 Unique/Single instance . . . . . . . . . . . .: $ac_xunique"

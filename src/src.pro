@@ -113,7 +113,7 @@ unix {
 	icon.path = $${DATADIR}/icons/hicolor/32x32/apps
 	icon.files += images/$${TARGET}.png 
 
-	appdata.path = $${DATADIR}/appdata
+	appdata.path = $${DATADIR}/metainfo
 	appdata.files += appdata/$${TARGET}.appdata.xml
 }
 
@@ -124,6 +124,8 @@ win32 {
     }
 
     RC_FILE = win32/qsynth.rc
+
+	DEFINES += _USE_MATH_DEFINES
 }
 
 
@@ -131,3 +133,4 @@ win32 {
 !lessThan(QT_MAJOR_VERSION, 5) {
 	QT += widgets
 }
+

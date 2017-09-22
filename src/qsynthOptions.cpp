@@ -1,7 +1,7 @@
 // qsynthOptions.cpp
 //
 /****************************************************************************
-   Copyright (C) 2003-2016, rncbc aka Rui Nuno Capela. All rights reserved.
+   Copyright (C) 2003-2017, rncbc aka Rui Nuno Capela. All rights reserved.
 
    This program is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License
@@ -103,7 +103,7 @@ void qsynthOptions::saveOptions (void)
 {
 	// Make program version available in the future.
 	m_settings.beginGroup("/Program");
-	m_settings.setValue("/Version", QSYNTH_VERSION);
+	m_settings.setValue("/Version", CONFIG_BUILD_VERSION);
 	m_settings.endGroup();
 
 	// Save engines list...
@@ -366,12 +366,11 @@ bool qsynthOptions::parse_args ( const QStringList& args )
 			return false;
 		}
 		else if (sArg == "-V" || sArg == "--version") {
-			out << QObject::tr("Qt: %1\n")
+			out << QString("Qt: %1\n")
 				.arg(qVersion());
-			out << QObject::tr("%1: %2  (%3)\n")
+			out << QString("%1: %2\n")
 				.arg(QSYNTH_TITLE)
-				.arg(QSYNTH_VERSION)
-				.arg(CONFIG_BUILD_DATE);
+				.arg(CONFIG_BUILD_VERSION);
 			return false;
 		}
 		else {
@@ -893,7 +892,6 @@ void qsynthOptions::loadWidgetGeometry ( QWidget *pWidget, bool bVisible )
 			= m_settings.value("/geometry").toByteArray();
 		if (!geometry.isEmpty())
 			pWidget->restoreGeometry(geometry);
-		else
 	#else//--LOAD_OLD_GEOMETRY
 		QPoint wpos;
 		QSize  wsize;
@@ -905,9 +903,9 @@ void qsynthOptions::loadWidgetGeometry ( QWidget *pWidget, bool bVisible )
 			pWidget->move(wpos);
 		if (wsize.width() > 0 && wsize.height() > 0)
 			pWidget->resize(wsize);
-		else
 	#endif
-		pWidget->adjustSize();
+	//	else
+	//	pWidget->adjustSize();
 		if (!bVisible)
 			bVisible = m_settings.value("/visible", false).toBool();
 		if (bVisible && !bStartMinimized)
@@ -944,3 +942,4 @@ void qsynthOptions::saveWidgetGeometry ( QWidget *pWidget, bool bVisible )
 
 
 // end of qsynthOptions.cpp
+

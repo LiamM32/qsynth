@@ -6,13 +6,31 @@ ChangeLog
 
 GIT HEAD
 
+- Increased Soundfont bank-offset limit to 16384 (was 128).
+
+- Desktop entry specification file is now finally independent
+  from build/configure template chains.
+
+- Updated target path for freedesktop.org's AppStream metainfo
+  file (formerly AppData).
+
+
+0.4.4  2017-04-27  Pre-LAC2017 release frenzy.
+
+- Added French man page (by Olivier Humbert, thanks).
+
+- Make builds reproducible byte for byte, by getting rid of
+  the configure build date and time stamps.
+
+
+0.4.3  2016-11-14  A Fall'16 release.
+
 - Fixed a potential crash on the singleton/unique application
   instance setup.
 
 - Almost complete overhaul on the configure script command
   line options, wrt. installation directories specification,
   eg. --prefix, --bindir, --libdir, --datadir and --mandir.
-  (EXPERIMENTAL)
 
 - Late French (fr) translation update (by Olivier Humbert,
   thanks).

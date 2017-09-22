@@ -28,6 +28,8 @@ public:
 
 	void resetAllKeyTunings();
 	void updateKeyTuning(int iTune, double tuningcents);
+	
+	friend int fluid_synth_tuning_dump(fluid_synth_t* synth, int bank, int prog, char* name, int len, double* pitch);
 
 public slots:
 
@@ -61,6 +63,7 @@ private:
 	fluid_synth_t *m_pSynth;
 	
 	double tuningcents[128];
+	double* pTuningcents;
 
 	int m_iDirtySetup;
 	int m_iDirtyCount;

@@ -162,7 +162,9 @@ void qsynthTuningsForm::updateKeyTuning (int iKey, double keytuningcents )
 
 void qsynthTuningsForm::updateAllKeyTunings ()
 {
-	double tuningcents[128];
+	//double tuningcents[128];
+	pTuningcents = tuningcents;
+	
 	int tuningBank = 0; //HELP: Don't really know how tuning bank should be determined.
 	int tuningProg = 0; //HELP: Don't know what the "program" should be either.
 	::fluid_synth_tuning_dump(m_pSynth, tuningBank, tuningProg, NULL, 0, tuningcents);

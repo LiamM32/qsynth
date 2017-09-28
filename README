@@ -35,7 +35,14 @@ Installation
 ------------
 
 The installation procedure follows the standard for source distributions.
-Unpack the tarball and in the extracted source directory:
+
+If you're checking out from Git, or if there is no "configure" file in
+the root directory, you'll have to prepare the configure script just 
+before you proceed with the following instructions:
+
+   ./autogen.sh
+
+Now unpack the tarball and in the extracted source directory:
 
     ./configure [--prefix=/usr/local]
     make
@@ -55,10 +62,6 @@ Just launch ${prefix}/bin/qsynth and you're off (hopefully).
 
 Note that the default installation path ${prefix} is /usr/local.
 
-If you're checking out from Git, you'll have to prepare the
-configure script just before you proceed with the above instructions:
-
-   ./autogen.sh
 
 
 Configuration

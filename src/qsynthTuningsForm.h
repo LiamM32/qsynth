@@ -26,8 +26,9 @@ public:
 
 	void setup(qsynthOptions *pOptions, qsynthEngine *pEngine, bool bTuning/*TODO:Or change to bNew or bPreset*/);
 
-	void resetAllKeyTunings();
-	void updateKeyTuning(int iTune, double tuningcents);
+	void setKeyOn(int iKey, bool bOn);
+	void resetAllKeyTunings(bool bTuning);
+	void updateKeyTuning(int iKey, double tuningcents);
 	
 	friend int fluid_synth_tuning_dump(fluid_synth_t* synth, int bank, int prog, char* name, int len, double* pitch);
 

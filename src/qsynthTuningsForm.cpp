@@ -52,7 +52,7 @@ qsynthTuningsForm::qsynthTuningsForm (
 	pHeader->resizeSection(0, 24);			// In.
 
 	//HELP: Am I doing this right?
-	m_ui.TuningsListView->sortItems(1, Qt::DescendingOrder);
+	m_ui.TuningsListView->sortItems(1, Qt::AscendingOrder);
 	
 	// UI connections
 /*	QObject::connect(m_ui.TuningsListView,
@@ -137,7 +137,7 @@ void qsynthTuningsForm::setup ( qsynthOptions *pOptions,
 
 		m_iDirtySetup++;
 		m_iDirtySetup--;
-		resetAllKeyTunings();
+		resetAllKeyTunings(bTuning);
 	}
 }
 
@@ -177,7 +177,7 @@ void qsynthTuningsForm::updateAllKeyTunings ()
 	stabilizeForm();
 }
 
-void qsynthTuningsForm::resetAllKeyTunings ()
+void qsynthTuningsForm::resetAllKeyTunings (bool bTuning)
 {
 	if (m_pEngine == NULL)
 		return;
@@ -186,7 +186,31 @@ void qsynthTuningsForm::resetAllKeyTunings ()
 	if (pSetup == NULL)
 		return;
 	
-	updateAllKeyTunings();
+	if (fluid_synth_tuning_dump(m_pSynth, 0, 0, NULL, 0, NULL))
+		fluid_synth_create_key_tuning(m_pSynth, 0, 0, "12 Equal Temperament", NULL);//TODO: Make "12 Equal Temperament" translatable
+	/*{//Temporary block for testing tuning
+		double defaultTuning[128];
+		double tuneCents = 0.0;
+		for(int iKey = 0; iKey < 128; iKey++)
+		{
+			defaultTuning[iKey] = tuneCents;
+			tuneCents += 100.0;
+		}
+		fluid_synth_activate_key_tuning(m_pSynth, 0, 0, "ET", defaultTuning, true);
+	}	*/
+	if (!bTuning)
+		updateAllKeyTunings();
+}
+
+void qsynthTuningsForm::setKeyOn(int iKey, bool bOn)
+{
+	if (m_ppTuning == NULL)
+		return;
+	if ((0 > iKey) || (iKey >= 128))
+		return;
+	
+	m_ppTuning[iKey]->setIcon(QSYNTH_TUNINGS_IN,
+		(bOn ? *m_pXpmLedOn : *m_pXpmLedOff));
 }
 
 void qsynthTuningsForm::itemActivated ( QTreeWidgetItem *pItem, int )

@@ -181,9 +181,19 @@ struct qsynth_midi_channel
 	int iChange;    // Change activity accumulator.
 };
 
+//#define qsynth_midi_key qsynth_midi_channel
+/*struct qsynth_midi_key
+{
+	int iEvent;
+	int iState;
+	int iChange;
+};*/
+
 
 static int                  g_iMidiChannels  = 0;
 static qsynth_midi_channel *g_pMidiChannels  = NULL;
+
+static qsynth_midi_channel     *g_pMidiKeys      = NULL;
 
 
 static void qsynth_midi_event ( qsynthEngine *pEngine,
@@ -193,9 +203,9 @@ static void qsynth_midi_event ( qsynthEngine *pEngine,
 
 	if (g_pMidiChannels && pEngine == g_pCurrentEngine) {
 		const int iChan = ::fluid_midi_event_get_channel(pMidiEvent);
+		const int iKey  = ::fluid_midi_event_get_control(pMidiEvent);
 	#ifdef CONFIG_DEBUG
 		const int iType = ::fluid_midi_event_get_type(pMidiEvent);
-		const int iKey  = ::fluid_midi_event_get_control(pMidiEvent);
 		const int iVal  = ::fluid_midi_event_get_value(pMidiEvent);
 		fprintf(stderr, "Type=%03d (0x%02x) Chan=%02d Key=%03d (0x%02x) Val=%03d (0x%02x).\n",
 			iType, iType, iChan, iKey, iKey, iVal, iVal);
@@ -216,6 +226,7 @@ static void qsynth_midi_event ( qsynthEngine *pEngine,
 			case QSYNTH_MIDI_NOTE_ON:
 			case QSYNTH_MIDI_NOTE_OFF:
 				g_pMidiChannels[iChan].iEvent++;
+				g_pMidiKeys[iKey].iEvent++;
 				break;
 			}
 		}
@@ -1282,7 +1293,7 @@ void qsynthMainForm::systemReset (void)
 		if (m_pChannelsForm)
 			m_pChannelsForm->resetAllChannels(true);
 		if (m_pTuningsForm) // Should I do this?
-			m_pTuningsForm->resetAllKeyTunings();
+			m_pTuningsForm->resetAllKeyTunings(true);
 	}
 	stabilizeForm();
 }
@@ -1632,6 +1643,7 @@ void qsynthMainForm::tabSelect ( int iTab )
 				+ " [" + pEngine->name() + "]");
 			loadPanelSettings(pEngine, false);
 			resetChannelsForm(pEngine, false);
+			resetTuningsForm(pEngine, false); //HELP: Should this line be placed elsewhere?
 		}
 	}
 
@@ -1739,12 +1751,29 @@ void qsynthMainForm::timerSlot (void)
 		}
 	}
 	
-/*	// MIDI Key activity breakout...
+	// MIDI Key activity breakout...
 	if (m_pTuningsForm) {
 		for (int iKey = 0; iKey < 128; ++iKey) {
-			if (g_pT)
+			if (g_pMidiKeys[iKey].iEvent > 0) {
+				g_pMidiKeys[iKey].iEvent = 0;
+				// Activity tracking...
+				if (g_pMidiKeys[iKey].iState == 0) {
+					m_pTuningsForm->setKeyOn(iKey, true);
+					g_pMidiKeys[iKey].iState++;
+				}
+				// Control and/or program change...
+				if (g_pMidiChannels[iKey].iChange > 0) {
+					g_pMidiChannels[iKey].iChange = 0;
+					//m_pTuningsForm->updateKeyTuning(iKey);
+				}
+			}   // Activity fallback...
+			else if (g_pMidiKeys[iKey].iEvent == 0
+				&& g_pMidiKeys[iKey].iState > 0) {
+				if (--(g_pMidiKeys[iKey].iState) == 0)
+					m_pTuningsForm->setKeyOn(iKey, false);
+			}
 		}
-	}*/
+	}
 
 	// Gain changes?
 	if (m_iGainChanged > 0)
@@ -2400,6 +2429,19 @@ void qsynthMainForm::resetTuningsForm ( qsynthEngine *pEngine, bool bTuning )
 		return;
 	
 	m_pTuningsForm->setup(m_pOptions, pEngine, bTuning);
+	
+	if (g_pMidiKeys)
+		delete [] g_pMidiKeys;
+	g_pMidiKeys = NULL;
+	
+	g_pMidiKeys = new qsynth_midi_channel [128];
+	if (g_pMidiKeys) {
+		for (int iKey = 0; iKey < 128; ++iKey) {
+			g_pMidiKeys[iKey].iEvent  = 0;
+			g_pMidiKeys[iKey].iState  = 0;
+			g_pMidiKeys[iKey].iChange = 0;
+		}
+	}
 }
 
 

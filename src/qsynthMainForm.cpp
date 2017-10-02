@@ -1986,13 +1986,16 @@ bool qsynthMainForm::startEngine ( qsynthEngine *pEngine )
 			tr("Server mode disabled.\n\n"
 			"Continuing without it."));
 	#endif
+	}
 		
-	// Create the command handler.
+/*	// Create the command handler.
 	appendMessages(sPrefix + tr("Creating MIDI player") + sElipsis);
 	pEngine->pCmdHandler = ::new_fluid_cmd_handler(pEngine->pSynth);
-	
+	if (pEngine->pCmdHandler == NULL) {
+		appendMessagesError(sPrefix + tr("Failed to create the Command Handler.\n"));
+	} else {
 	::fluid_usershell(pSetup->fluid_settings(), pEngine->pCmdHandler);
-	}
+	}*/
 
 	// Make an initial program reset.
 	m_pOptions->loadPreset(pEngine, pSetup->sDefPreset);

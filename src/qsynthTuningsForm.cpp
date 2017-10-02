@@ -55,6 +55,9 @@ qsynthTuningsForm::qsynthTuningsForm (
 	m_ui.TuningsListView->sortItems(1, Qt::AscendingOrder);
 	
 	// UI connections
+	QObject::connect(m_ui.TuningOpenPushButton,
+		SIGNAL(clicked()),
+		SLOT(openSysex()));
 /*	QObject::connect(m_ui.TuningsListView,
 		SIGNAL(customContextMenuRequested(const QPoint&)),
 		SLOT(contextMenuRequested(QTreeWidgetItem*,int)));*/
@@ -66,7 +69,7 @@ qsynthTuningsForm::qsynthTuningsForm (
 
 qsynthTuningsForm::~qsynthTuningsForm (void)
 {
-	//	setup(NULL, NULL, false);
+//	setup(NULL, NULL, false);
 }
 
 
@@ -198,7 +201,7 @@ void qsynthTuningsForm::resetAllKeyTunings (bool bTuning)
 		}
 		fluid_synth_activate_key_tuning(m_pSynth, 0, 0, "ET", defaultTuning, true);
 	}	*/
-	if (!bTuning)
+//	if (!bTuning)
 		updateAllKeyTunings();
 }
 
@@ -224,15 +227,15 @@ void qsynthTuningsForm::itemActivated ( QTreeWidgetItem *pItem, int )
 }
 
 //WIP: Will be to open and load a sysex file.
-/*void qsynthTuningsForm::openSysex (void)
+void qsynthTuningsForm::openSysex (void)
 {
-	QStringList syxfiles = QFileDialog::getOpenFileName(
+	QString syxfiles = QFileDialog::getOpenFileName(
 		this,
 		QSYNTH_TITLE ": " + tr("sysex files"),
 		"~",
 		tr("sysex files (*)"));
 }
-*/
+
 
 // Stabilize current form state.
 void qsynthTuningsForm::stabilizeForm (void)

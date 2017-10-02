@@ -4,6 +4,7 @@ TARGET = qsynth
 
 TEMPLATE = app
 INCLUDEPATH += .
+QT += testlib
 
 include(src.pri)
 
